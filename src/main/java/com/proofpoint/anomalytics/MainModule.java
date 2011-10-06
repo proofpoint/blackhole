@@ -18,11 +18,8 @@ package com.proofpoint.anomalytics;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import org.weakref.jmx.guice.MBeanModule;
 
-import static com.proofpoint.configuration.ConfigurationModule.bindConfig;
 import static com.proofpoint.discovery.client.DiscoveryBinder.discoveryBinder;
-import static com.proofpoint.event.client.EventBinder.eventBinder;
 
 public class MainModule
         implements Module
