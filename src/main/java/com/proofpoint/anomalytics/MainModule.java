@@ -32,7 +32,7 @@ public class MainModule
         binder.requireExplicitBindings();
         binder.disableCircularProxies();
 
-        binder.bind(DummyTrafficStatsResource.class).in(Scopes.SINGLETON);
+        binder.bind(DummyResource.class).in(Scopes.SINGLETON);
 
         discoveryBinder(binder).bindHttpAnnouncement("collector");
     }
