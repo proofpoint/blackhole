@@ -34,6 +34,6 @@ public class MainModule
 
         binder.bind(DummyTrafficStatsResource.class).in(Scopes.SINGLETON);
 
-        discoveryBinder(binder).bindHttpAnnouncement("trafficstats");
+        discoveryBinder(binder).bindHttpAnnouncement("collector");
     }
 }
