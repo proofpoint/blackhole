@@ -4,6 +4,7 @@ import com.google.inject.Injector;
 import com.proofpoint.bootstrap.Bootstrap;
 import com.proofpoint.discovery.client.Announcer;
 import com.proofpoint.discovery.client.DiscoveryModule;
+import com.proofpoint.event.client.HttpEventModule;
 import com.proofpoint.jmx.http.rpc.JmxHttpRpcModule;
 import com.proofpoint.json.JsonModule;
 import com.proofpoint.http.server.HttpServerModule;
@@ -26,6 +27,7 @@ public class Main
                 new HttpServerModule(),
                 new JsonModule(),
                 new JaxrsModule(),
+                new HttpEventModule(),
                 new MBeanModule(),
                 new JmxModule(),
                 new JmxHttpRpcModule(),

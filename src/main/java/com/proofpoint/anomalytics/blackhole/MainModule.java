@@ -12,6 +12,7 @@ import com.proofpoint.http.server.HttpServerInfo;
 import static com.proofpoint.configuration.ConfigurationModule.bindConfig;
 import static com.proofpoint.discovery.client.DiscoveryBinder.discoveryBinder;
 import static com.proofpoint.discovery.client.ServiceAnnouncement.serviceAnnouncement;
+import static org.weakref.jmx.guice.MBeanModule.newExporter;
 
 public class MainModule
         implements Module
@@ -23,6 +24,7 @@ public class MainModule
 
         binder.bind(BlackholeResource.class).in(Scopes.SINGLETON);
         bindConfig(binder).to(BlackholeConfig.class);
+        newExporter(binder).export(BlackholeResource.class).withGeneratedName();
         discoveryBinder(binder).bindServiceAnnouncement(JmxHttpRpcAnnouncementProvider.class);
     }
 

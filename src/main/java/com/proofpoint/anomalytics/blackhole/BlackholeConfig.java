@@ -6,7 +6,19 @@ import javax.validation.constraints.NotNull;
 
 public class BlackholeConfig
 {
+    private double samplingRate;
     private String serviceAnnouncement;
+
+    public double getSamplingRate()
+    {
+        return samplingRate;
+    }
+
+    @Config("blackhole.sample-percentage")
+    public void setSamplingRate(double samplingRate)
+    {
+        this.samplingRate = samplingRate;
+    }
 
     @NotNull
     public String getServiceAnnouncement()

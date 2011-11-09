@@ -3,48 +3,102 @@ package com.proofpoint.anomalytics.blackhole;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
+import com.proofpoint.event.client.EventClient;
+import org.weakref.jmx.Managed;
 
+import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Path("{path: .*}")
 public class BlackholeResource
 {
+    private final EventClient eventClient;
+    private final AtomicReference<Double> sampleRate = new AtomicReference<Double>();
+    private final Random random = new SecureRandom();
+
+    public BlackholeResource(double sampleRate, EventClient eventClient)
+    {
+        this.eventClient = eventClient;
+        this.sampleRate.set(sampleRate);
+    }
+
+    @Managed
+    public double getSampleRate()
+    {
+        return sampleRate.get();
+    }
+
+    @Managed
+    public void setSampleRate(double sampleRate)
+    {
+        this.sampleRate.set(sampleRate);
+    }
+
+    @Inject
+    public BlackholeResource(BlackholeConfig config, EventClient eventClient)
+    {
+        this.sampleRate.set(config.getSamplingRate());
+        this.eventClient = eventClient;
+    }
+
     @GET
-    public Response get(InputStream input)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response get(@Context UriInfo uriInfo, InputStream input)
             throws IOException, ExecutionException, InterruptedException
     {
-        long total = ByteStreams.length(new OneTimeUseInputSupplier(input));
-        return Response.ok(total).build();
+        return processRequest("GET", uriInfo, input);
     }
 
     @PUT
-    public Response put(InputStream input)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response put(@Context UriInfo uriInfo, InputStream input)
             throws IOException, ExecutionException, InterruptedException
     {
-        long total = ByteStreams.length(new OneTimeUseInputSupplier(input));
-        return Response.ok(total).build();
+        return processRequest("PUT", uriInfo, input);
     }
 
+
     @POST
-    public Response post(InputStream input)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response post(@Context UriInfo uriInfo, InputStream input)
             throws IOException, ExecutionException, InterruptedException
     {
-        long total = ByteStreams.length(new OneTimeUseInputSupplier(input));
-        return Response.ok(total).build();
+        return processRequest("POST", uriInfo, input);
     }
 
     @DELETE
-    public Response delete(InputStream input)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(@Context UriInfo uriInfo, InputStream input)
             throws IOException, ExecutionException, InterruptedException
     {
+        return processRequest("DELETE", uriInfo, input);
+    }
+
+    private Response processRequest(String method, UriInfo uriInfo, InputStream input)
+            throws IOException
+    {
+        if (random.nextDouble() < sampleRate.get()) {
+            byte[] bytes = ByteStreams.toByteArray(input);
+            BlackholeEvent event = new BlackholeEvent(method, uriInfo.getRequestUri(), bytes);
+            eventClient.post(event);
+            input = new ByteArrayInputStream(bytes);
+        }
         long total = ByteStreams.length(new OneTimeUseInputSupplier(input));
         return Response.ok(total).build();
     }
