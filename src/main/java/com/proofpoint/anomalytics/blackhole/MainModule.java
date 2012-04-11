@@ -25,16 +25,17 @@ public class MainModule
         binder.bind(BlackholeResource.class).in(Scopes.SINGLETON);
         bindConfig(binder).to(BlackholeConfig.class);
         newExporter(binder).export(BlackholeResource.class).withGeneratedName();
-        discoveryBinder(binder).bindServiceAnnouncement(JmxHttpRpcAnnouncementProvider.class);
+        discoveryBinder(binder).bindServiceAnnouncement(BlackholeAnnouncementProvider.class);
     }
 
-    static class JmxHttpRpcAnnouncementProvider implements Provider<ServiceAnnouncement>
+    private static class BlackholeAnnouncementProvider
+            implements Provider<ServiceAnnouncement>
     {
         private HttpServerInfo httpServerInfo;
         private String serviceAnnouncement;
 
         @Inject
-        JmxHttpRpcAnnouncementProvider(BlackholeConfig config, HttpServerInfo httpServerInfo)
+        BlackholeAnnouncementProvider(BlackholeConfig config, HttpServerInfo httpServerInfo)
         {
             serviceAnnouncement = config.getServiceAnnouncement();
             this.httpServerInfo = httpServerInfo;
