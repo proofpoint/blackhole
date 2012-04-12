@@ -53,7 +53,7 @@ public class BlackholeResource
     @Inject
     public BlackholeResource(BlackholeConfig config, EventClient eventClient)
     {
-        this.sampleRate.set(config.getSamplingRate());
+        this.sampleRate.set(config.getSamplingRate().doubleValue());
         this.eventClient = eventClient;
     }
 
