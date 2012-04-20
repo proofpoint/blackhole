@@ -12,6 +12,7 @@ import com.proofpoint.configuration.ConfigurationModule;
 import com.proofpoint.event.client.EventClient;
 import com.proofpoint.event.client.InMemoryEventClient;
 import com.proofpoint.event.client.InMemoryEventModule;
+import com.proofpoint.http.client.ApacheHttpClient;
 import com.proofpoint.http.client.BodyGenerator;
 import com.proofpoint.http.client.HttpClient;
 import com.proofpoint.http.client.Request;
@@ -73,7 +74,7 @@ public class TestServer
 
         server.start();
         executor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Test-Server-%s").build());
-        client = new HttpClient(executor);
+        client = new ApacheHttpClient();
     }
 
     @AfterMethod
@@ -107,10 +108,9 @@ public class TestServer
     public void testGet()
             throws Exception
     {
-        // java.net.URL doesn't allow body for GET
-        // assertEquals(eventClient.getEvents().size(), 0);
-        // testMethod("GET");
-        // assertEquals(eventClient.getEvents().size(), 0);
+        assertEquals(eventClient.getEvents().size(), 0);
+        testMethod("GET");
+        assertEquals(eventClient.getEvents().size(), 0);
     }
 
     @Test
@@ -135,10 +135,9 @@ public class TestServer
     public void testDelete()
             throws Exception
     {
-        // java.net.URL doesn't allow body for delete
-        // assertEquals(eventClient.getEvents().size(), 0);
-        // testMethod("DELETE");
-        // assertEquals(eventClient.getEvents().size(), 0);
+        assertEquals(eventClient.getEvents().size(), 0);
+        testMethod("DELETE");
+        assertEquals(eventClient.getEvents().size(), 0);
     }
 
     public void testMethod(String method)
@@ -175,7 +174,7 @@ public class TestServer
                 String entity = CharStreams.toString(new InputStreamReader(response.getInputStream(), Charsets.UTF_8)).trim();
                 return Long.parseLong(entity);
             }
-        }).checkedGet();
+        });
 
         Assert.assertEquals(bytes, DATA.length());
     }
