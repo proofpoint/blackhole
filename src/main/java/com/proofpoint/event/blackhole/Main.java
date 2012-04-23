@@ -1,4 +1,4 @@
-package com.proofpoint.anomalytics.blackhole;
+package com.proofpoint.event.blackhole;
 
 import com.google.inject.Injector;
 import com.proofpoint.bootstrap.Bootstrap;

@@ -1,4 +1,4 @@
-package com.proofpoint.anomalytics.blackhole;
+package com.proofpoint.event.blackhole;
 
 import com.proofpoint.configuration.Config;
 import com.proofpoint.configuration.ConfigDescription;
