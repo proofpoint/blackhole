@@ -4,7 +4,10 @@
     <groupId>com.proofpoint.event</groupId>
     <artifactId>blackhole</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Black hole</name>
+
+    <name>blackhole</name>
+    <description>Black hole</description>
+    <url>https://github.com/proofpoint/blackhole</url>
 
     <parent>
         <groupId>com.proofpoint.platform</groupId>
@@ -12,20 +15,34 @@
         <version>0.60</version>
     </parent>
 
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <main-class>com.proofpoint.event.blackhole.Main</main-class>
     </properties>
 
+    <scm>
+        <connection>scm:git:git://github.com/proofpoint/blackhole.git</connection>
+        <developerConnection>scm:git:git@github.com:proofpoint/blackhole.git</developerConnection>
+        <url>https://github.com/proofpoint/blackhole</url>
+    </scm>
+
     <distributionManagement>
         <snapshotRepository>
-            <id>proofpoint-snapshots</id>
-            <name>Proofpoint Snapshots Repository</name>
-            <url>http://maven.us.proofpoint.com/nexus/content/repositories/proofpoint-eng-snapshots</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>proofpoint-releases</id>
-            <name>Proofpoint Releases Repository</name>
-            <url>http://maven.us.proofpoint.com/nexus/content/repositories/proofpoint-eng</url>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
@@ -151,4 +168,49 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+              Do a license check by running: mvn license:check
+              Update the license by running: mvn license:format
+            -->
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <header>license-header.txt</header>
+                    <strictCheck>true</strictCheck>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <excludes>
+                        <exclude>**/README.txt</exclude>
+                        <exclude>**/config.properties</exclude>
+                        <exclude>**/log.properties</exclude>
+                        <exclude>**/logback-test.xml</exclude>
+                        <exclude>**/.gitignore</exclude>
+                        <exclude>var/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <arguments>-Psonatype-oss-release</arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
