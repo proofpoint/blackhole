@@ -191,6 +191,7 @@
                         <exclude>**/log.properties</exclude>
                         <exclude>**/logback-test.xml</exclude>
                         <exclude>**/.gitignore</exclude>
+                        <exclude>.idea/**</exclude>
                         <exclude>var/**</exclude>
                     </excludes>
                 </configuration>
