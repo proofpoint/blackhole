@@ -28,6 +28,7 @@ import static com.proofpoint.configuration.ConfigurationModule.bindConfig;
 import static com.proofpoint.discovery.client.DiscoveryBinder.discoveryBinder;
 import static com.proofpoint.discovery.client.ServiceAnnouncement.serviceAnnouncement;
 import static org.weakref.jmx.guice.MBeanModule.newExporter;
+import static com.proofpoint.event.client.EventBinder.eventBinder;
 
 public class MainModule
         implements Module
@@ -36,6 +37,8 @@ public class MainModule
     {
         binder.requireExplicitBindings();
         binder.disableCircularProxies();
+
+        eventBinder(binder).bindEventClient(BlackholeEvent.class);
 
         binder.bind(BlackholeResource.class).in(Scopes.SINGLETON);
         bindConfig(binder).to(BlackholeConfig.class);
